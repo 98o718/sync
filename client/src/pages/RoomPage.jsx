@@ -3,6 +3,7 @@ import { findDOMNode } from 'react-dom'
 import { useRoute } from 'wouter'
 import { useHistory } from 'react-router-dom'
 import copy from 'copy-to-clipboard'
+import { isIOS } from 'react-device-detect'
 import {
   leaveRoom,
   useSocket,
@@ -74,15 +75,15 @@ export const RoomPage = () => {
       })
 
       changeSeek(socket, (time) => {
-        console.log('seeek')
         if (player.current !== null) {
-          console.log(time)
           player.current.currentTime = time
         }
       })
 
       changePause(socket, () => {
-        player.current.pause()
+        if (player.current !== null) {
+          player.current.pause()
+        }
       })
     } else {
       socket.off('play')
@@ -129,8 +130,14 @@ export const RoomPage = () => {
     }
   }
 
-  const handleCopy = () => {
+  const copyURL = () => {
     copy(window.location.href)
+    toast.success('Скопировано!')
+  }
+
+  const copyID = () => {
+    copy(id)
+    toast.success('Скопировано!')
   }
 
   const handleSeek = () => {
@@ -142,13 +149,18 @@ export const RoomPage = () => {
   return (
     <>
       <h2 className="text-center">
-        Комната – {id}{' '}
-        <Button outline onClick={handleCopy}>
-          Скопировать
-        </Button>
+        {id}
+        <div>
+          <Button className="m-2" outline onClick={copyID}>
+            Скопировать ID
+          </Button>
+          <Button className="m-2" outline onClick={copyURL}>
+            Скопировать ссылку
+          </Button>
+        </div>
       </h2>
       {admin && (
-        <Form className="m-3" onSubmit={(e) => e.preventDefault()}>
+        <Form className="m-2" onSubmit={(e) => e.preventDefault()}>
           <FormGroup>
             <InputGroup>
               <Input
@@ -173,9 +185,10 @@ export const RoomPage = () => {
           <video
             ref={player}
             id="vid"
-            width="640"
-            height="360"
-            controls={admin}
+            width="100%"
+            // width="640"
+            // height="360"
+            controls={admin || isIOS}
             onPlay={handlePlay}
             onPause={handlePause}
             onSeeked={handleSeek}
@@ -183,7 +196,7 @@ export const RoomPage = () => {
             <source src={video} type="video/mp4" />
           </video>
 
-          {!admin && (
+          {!admin && !isIOS && (
             <Button className="m-3" onClick={handleFullScreen}>
               На весь экран
             </Button>
