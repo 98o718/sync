@@ -8,7 +8,7 @@ import {
   InputGroupAddon,
 } from 'reactstrap'
 import { useHistory } from 'react-router-dom'
-import { isUuid } from '../../../server/node_modules/uuidv4/build/lib/uuidv4'
+import { isUuid } from 'uuidv4'
 import { toast } from 'react-toastify'
 
 export const JoinPage = () => {
