@@ -176,6 +176,7 @@ export const RoomPage = () => {
             width="640"
             height="360"
             controls={admin}
+            autoPlay={false}
             onPlay={handlePlay}
             onPause={handlePause}
             onSeeked={handleSeek}
