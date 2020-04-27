@@ -8,6 +8,8 @@ import {
   InputGroupAddon,
 } from 'reactstrap'
 import { useHistory } from 'react-router-dom'
+import { isUuid } from '../../../server/node_modules/uuidv4/build/lib/uuidv4'
+import { toast } from 'react-toastify'
 
 export const JoinPage = () => {
   const [id, setId] = useState('')
@@ -19,7 +21,11 @@ export const JoinPage = () => {
   }
 
   const handleSubmit = () => {
-    history.push(`/room/${id}`)
+    if (!isUuid(id)) {
+      toast.error('Некорректный идентификатор!')
+    } else {
+      history.push(`/room/${id}`)
+    }
   }
 
   return (
