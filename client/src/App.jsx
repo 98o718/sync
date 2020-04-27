@@ -7,12 +7,7 @@ import { SocketProvider } from './socket'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-const socket = io(process.env.REACT_APP_WS_ENDPOINT, {
-  upgrade: false,
-  transports: ['websocket'],
-  reconnection: true,
-  forceNew: false,
-})
+const socket = io(process.env.REACT_APP_WS_ENDPOINT)
 
 const App = () => {
   return (
