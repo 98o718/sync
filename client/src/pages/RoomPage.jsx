@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { findDOMNode } from 'react-dom'
-import { useRoute } from 'wouter'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import copy from 'copy-to-clipboard'
 import { isIOS } from 'react-device-detect'
 import {
@@ -34,7 +33,7 @@ export const RoomPage = () => {
   const socket = useSocket()
 
   const history = useHistory()
-  const [, { id }] = useRoute('/room/:id')
+  const { id } = useParams()
 
   const [admin, setAdmin] = useState(false)
   const [url, setUrl] = useState('https://ohhmode.ru/09.mp4')
