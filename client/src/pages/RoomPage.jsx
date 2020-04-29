@@ -31,10 +31,10 @@ export const RoomPage = () => {
 
   useEffect(() => {
     if (admin === false) {
+      navigator.mediaDevices.getUserMedia({ video: true })
       connection.onstream = (event) => {
         setHidden(true)
         // alert('stream')
-        console.log(event.stream.getTracks())
         localStream.current.srcObject = event.stream
         console.log(localStream.current.srcObject)
       }
@@ -55,6 +55,10 @@ export const RoomPage = () => {
     }
   }, [])
 
+  useEffect(() => {
+    alert(connection.isOnline)
+  }, [connection.isOnline])
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
   useEffect(() => {
@@ -68,11 +72,7 @@ export const RoomPage = () => {
       })
     }
     return () => {
-      if (!isUuid(id)) {
-        history.push('/')
-      } else {
-        leaveRoom(socket)
-      }
+      leaveRoom(socket)
     }
   }, [history, id, socket])
 
