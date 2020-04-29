@@ -22,20 +22,7 @@ connection.socketURL = process.env.REACT_APP_RTC_ENDPOINT
 connection.dontCaptureUserMedia = true
 connection.autoCreateMediaElement = false
 
-// connection.codecs = {
-//   video: 'vp8',
-//   audio: 'opus',
-// }
-
 connection.direction = 'one-to-many'
-
-// if (process.env.NODE_ENV !== 'development') {
-//   connection.iceTransportPolicy = 'relay'
-//   connection.iceProtocols = {
-//     udp: false,
-//     tcp: true,
-//   }
-// }
 
 if (process.env.REACT_APP_STUN && process.env.REACT_APP_TURN) {
   connection.iceServers = []
