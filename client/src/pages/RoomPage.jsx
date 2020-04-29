@@ -35,7 +35,7 @@ export const RoomPage = () => {
         setHidden(true)
         // alert('stream')
         localStream.current.srcObject = event.stream
-        localStream.current.play()
+        // localStream.current.play()
         console.log(localStream.current.srcObject)
       }
 
