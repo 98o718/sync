@@ -138,15 +138,13 @@ export const RoomPage = () => {
         admin !== undefined && (
           <>
             <video
-              // style={{ display: hidden ? 'block' : 'none' }}
+              style={{ display: hidden ? 'block' : 'none' }}
               width="100%"
               ref={localStream}
               autoPlay
               playsInline
               controls
-              preload="auto"
               muted
-              type="video/mp4"
             />
           </>
         )
