@@ -17,9 +17,7 @@ import RTCMultiConnection from 'rtcmulticonnection-react-js'
 const socket = io(process.env.REACT_APP_WS_ENDPOINT)
 const connection = new RTCMultiConnection()
 
-const port = process.env.NODE_ENV === 'development' ? '/' : ':443/'
-
-connection.socketURL = process.env.REACT_APP_WS_ENDPOINT + port
+connection.socketURL = process.env.REACT_APP_RTC_ENDPOINT
 
 connection.dontCaptureUserMedia = true
 connection.autoCreateMediaElement = false
@@ -30,6 +28,18 @@ connection.codecs = {
 }
 
 connection.direction = 'one-to-many'
+
+if (process.env.REACT_APP_STUN && process.env.REACT_APP_TURN) {
+  connection.iceServers = []
+  connection.iceServers.push({
+    urls: process.env.REACT_APP_STUN,
+  })
+  connection.iceServers.push({
+    urls: process.env.REACT_APP_TURN,
+    credential: process.env.REACT_APP_TURN_PWD,
+    username: process.env.REACT_APP_TURN_USERNAME,
+  })
+}
 
 const App = () => {
   return (
