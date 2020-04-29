@@ -1,18 +1,45 @@
 import React from 'react'
 import { Row, Col, Button, Navbar, NavbarBrand, Container } from 'reactstrap'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+} from 'react-router-dom'
 import { CreatePage, RoomPage, JoinPage } from './pages'
 import io from 'socket.io-client'
-import { SocketProvider } from './socket'
+import { SyncProvider } from './context'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import RTCMultiConnection from 'rtcmulticonnection-react-js'
 
 const socket = io(process.env.REACT_APP_WS_ENDPOINT)
+const connection = new RTCMultiConnection()
+
+const port = process.env.NODE_ENV === 'development' ? '/' : ':443/'
+
+connection.socketURL = process.env.REACT_APP_WS_ENDPOINT + port
+
+connection.dontCaptureUserMedia = true
+connection.autoCreateMediaElement = false
+
+connection.codecs = {
+  video: 'vp8',
+  audio: 'opus',
+}
+
+connection.direction = 'one-to-many'
 
 const App = () => {
   return (
     <Router>
-      <SocketProvider socket={socket}>
+      <SyncProvider
+        value={{
+          socket,
+          connection,
+        }}
+      >
         <ToastContainer position="top-center" autoClose={1500} />
         <Navbar
           className="bg-primary"
@@ -54,10 +81,13 @@ const App = () => {
               <Route path="/create" component={CreatePage} />
               <Route path="/join" component={JoinPage} />
               <Route path="/room/:id" component={RoomPage} />
+              <Route>
+                <Redirect to="/" />
+              </Route>
             </Switch>
           </Row>
         </Container>
-      </SocketProvider>
+      </SyncProvider>
     </Router>
   )
 }

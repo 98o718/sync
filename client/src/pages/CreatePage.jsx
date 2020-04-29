@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react'
-import { createRoom, onRoomCreated } from '../socket'
+import { createRoom, onRoomCreated, useSync } from '../context'
 import { BarLoader } from 'react-spinners'
 import { useHistory } from 'react-router-dom'
-import { useSocket } from '../socket'
 import { toast } from 'react-toastify'
 
 export const CreatePage = () => {
-  const socket = useSocket()
+  const { socket } = useSync()
 
   const history = useHistory()
 

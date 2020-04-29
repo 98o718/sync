@@ -3,6 +3,11 @@ const app = express()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const syncSocket = require('./ws/sync')
+const RTCMultiConnectionServer = require('rtcmulticonnection-server')
+
+io.on('connection', (socket) => {
+  RTCMultiConnectionServer.addSocket(socket)
+})
 
 syncSocket(io)
 
