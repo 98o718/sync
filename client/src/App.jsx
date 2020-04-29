@@ -29,6 +29,14 @@ connection.codecs = {
 
 connection.direction = 'one-to-many'
 
+if (process.env.NODE_ENV !== 'development') {
+  connection.iceTransportPolicy = 'relay'
+  connection.iceProtocols = {
+    udp: true,
+    tcp: true,
+  }
+}
+
 if (process.env.REACT_APP_STUN && process.env.REACT_APP_TURN) {
   connection.iceServers = []
   connection.iceServers.push({

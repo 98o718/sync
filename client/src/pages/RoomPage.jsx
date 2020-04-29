@@ -144,6 +144,7 @@ export const RoomPage = () => {
               autoPlay
               playsInline
               controls
+              preload="auto"
               muted
               type="video/mp4"
             />
