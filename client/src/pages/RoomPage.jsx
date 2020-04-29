@@ -142,6 +142,7 @@ export const RoomPage = () => {
               playsInline
               controls
               muted
+              type="video/mp4"
             />
           </>
         )
