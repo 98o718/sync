@@ -32,7 +32,11 @@ export const RoomPage = () => {
   useEffect(() => {
     if (admin === false) {
       connection.onstream = (event) => {
+        setHidden(true)
+        // alert('stream')
+        console.log(event.stream.getTracks())
         localStream.current.srcObject = event.stream
+        console.log(localStream.current.srcObject)
       }
 
       connection.onstreamended = () => {
@@ -96,7 +100,7 @@ export const RoomPage = () => {
         </div>
       </h2>
 
-      {admin ? (
+      {admin === true ? (
         <>
           {!hidden && (
             <div
@@ -133,16 +137,19 @@ export const RoomPage = () => {
           />
         </>
       ) : (
-        <>
-          <video
-            width="100%"
-            ref={localStream}
-            autoPlay
-            playsInline
-            controls
-            muted
-          />
-        </>
+        admin !== undefined && (
+          <>
+            <video
+              style={{ display: hidden ? 'block' : 'none' }}
+              width="100%"
+              ref={localStream}
+              autoPlay
+              playsInline
+              controls
+              muted
+            />
+          </>
+        )
       )}
     </>
   )

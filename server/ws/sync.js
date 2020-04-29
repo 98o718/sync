@@ -83,7 +83,7 @@ module.exports = (io) => {
 
       if (room && rooms[room] && rooms[room].users.length === 1) {
         delete rooms[room]
-      } else if (room) {
+      } else if (room && rooms[room]) {
         rooms[room].users = rooms[room].users.filter(
           (user) => user !== socket.id
         )
