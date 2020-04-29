@@ -32,7 +32,7 @@ connection.direction = 'one-to-many'
 if (process.env.NODE_ENV !== 'development') {
   connection.iceTransportPolicy = 'relay'
   connection.iceProtocols = {
-    udp: true,
+    udp: false,
     tcp: true,
   }
 }

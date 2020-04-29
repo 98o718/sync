@@ -7,9 +7,9 @@ git:
 cache:
   - yarn
   - npm
-branches:
-  only:
-    - master
+# branches:
+#   only:
+#     - master
 before_install:
   - openssl aes-256-cbc -K $encrypted_5f578ef89752_key -iv $encrypted_5f578ef89752_iv
     -in deploy_key.enc -out deploy_key -d
