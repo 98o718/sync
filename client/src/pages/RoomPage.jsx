@@ -139,8 +139,8 @@ export const RoomPage = () => {
               style={{ display: hidden ? 'block' : 'none' }}
               width="100%"
               ref={localStream}
-              autoPlay
-              playsInline
+              // autoPlay
+              // playsInline
               controls
               muted
             />
