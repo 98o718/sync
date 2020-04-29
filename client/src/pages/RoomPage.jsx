@@ -33,10 +33,7 @@ export const RoomPage = () => {
     if (admin === false) {
       connection.onstream = (event) => {
         setHidden(true)
-        // alert('stream')
         localStream.current.srcObject = event.stream
-        // localStream.current.play()
-        console.log(localStream.current.srcObject)
       }
 
       connection.onstreamended = () => {
@@ -139,8 +136,8 @@ export const RoomPage = () => {
               style={{ display: hidden ? 'block' : 'none' }}
               width="100%"
               ref={localStream}
-              // autoPlay
-              // playsInline
+              autoPlay
+              playsInline
               controls
               muted
             />
