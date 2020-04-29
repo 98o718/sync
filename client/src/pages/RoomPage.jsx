@@ -142,7 +142,13 @@ export const RoomPage = () => {
         </>
       ) : (
         <>
-          <video width="100%" ref={localStream} autoPlay playsInline />
+          <video
+            width="100%"
+            ref={localStream}
+            autoPlay
+            playsInline
+            controls={isIOS}
+          />
 
           {admin === false && !isIOS && (
             <Button className="m-3" onClick={handleFullScreen}>
