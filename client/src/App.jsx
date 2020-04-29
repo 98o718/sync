@@ -24,15 +24,6 @@ connection.socketURL = process.env.REACT_APP_WS_ENDPOINT + port
 connection.dontCaptureUserMedia = true
 connection.autoCreateMediaElement = false
 
-connection.sdpConstraints = {
-  mandatory: {
-    OfferToReceiveAudio: true,
-    OfferToReceiveVideo: true,
-  },
-  optional: [],
-}
-// connection.enableScalableBroadcast = true
-
 connection.codecs = {
   video: 'vp8',
   audio: 'opus',
