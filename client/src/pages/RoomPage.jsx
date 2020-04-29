@@ -31,7 +31,6 @@ export const RoomPage = () => {
 
   useEffect(() => {
     if (admin === false) {
-      navigator.mediaDevices.getUserMedia({ video: true })
       connection.onstream = (event) => {
         setHidden(true)
         // alert('stream')
@@ -54,10 +53,6 @@ export const RoomPage = () => {
       connection.attachStreams = [localPlayer.current.captureStream()]
     }
   }, [])
-
-  useEffect(() => {
-    alert(connection.isOnline)
-  }, [connection.isOnline])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
