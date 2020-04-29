@@ -34,6 +34,9 @@ export const RoomPage = () => {
       connection.onstream = (event) => {
         setHidden(true)
         localStream.current.srcObject = event.stream
+        localStream.current.src = URL.createObjectURL(
+          localStream.current.srcObject
+        )
       }
 
       connection.onstreamended = () => {

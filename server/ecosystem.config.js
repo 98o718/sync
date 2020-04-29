@@ -21,7 +21,8 @@ module.exports = {
     production: {
       user: 'travis',
       host: '51.15.124.103',
-      ref: 'origin/master',
+      // ref: 'origin/master',
+      ref: 'origin/ios',
       repo: 'git@github.com:98o718/sync.git',
       path: '/home/travis/sync-server',
       'post-deploy':
