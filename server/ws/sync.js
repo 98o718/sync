@@ -89,39 +89,5 @@ module.exports = (io) => {
         )
       }
     })
-
-    socket.on('set-url', (url) => {
-      const { room } = users[socket.id]
-
-      if (room && rooms[room]) {
-        rooms[room].url = url
-
-        io.to(room).emit('change-url', url)
-      }
-    })
-
-    socket.on('play', (time) => {
-      const { room } = users[socket.id]
-
-      if (room && rooms[room]) {
-        io.to(room).emit('play', time)
-      }
-    })
-
-    socket.on('pause', () => {
-      const { room } = users[socket.id]
-
-      if (room && rooms[room]) {
-        io.to(room).emit('pause')
-      }
-    })
-
-    socket.on('seek', (time) => {
-      const { room } = users[socket.id]
-
-      if (room && rooms[room]) {
-        io.to(room).emit('seek', time)
-      }
-    })
   })
 }

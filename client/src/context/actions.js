@@ -1,8 +1,3 @@
-export const disconnect = (socket) => {
-  socket.removeAllListeners()
-  socket.disconnect()
-}
-
 export const createRoom = (socket) => {
   if (!socket.connected) socket.open()
   socket.emit('room', { room: undefined })
@@ -24,36 +19,4 @@ export const onRoomCreated = (socket, cb) => {
 export const onRoomJoined = (socket, cb) => {
   socket.off('joined')
   socket.on('joined', (data) => cb(data))
-}
-
-export const changeUrl = (socket, url) => {
-  socket.emit('set-url', url)
-}
-
-export const handleUrlChange = (socket, cb) => {
-  socket.on('change-url', (data) => cb(data))
-}
-
-export const play = (socket, time) => {
-  socket.emit('play', time)
-}
-
-export const changePlay = (socket, cb) => {
-  socket.on('play', (data) => cb(data))
-}
-
-export const pause = (socket) => {
-  socket.emit('pause')
-}
-
-export const changePause = (socket, cb) => {
-  socket.on('pause', (data) => cb(data))
-}
-
-export const seek = (socket, time) => {
-  socket.emit('seek', time)
-}
-
-export const changeSeek = (socket, cb) => {
-  socket.on('seek', (data) => cb(data))
 }
