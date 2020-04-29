@@ -1,99 +1,65 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { findDOMNode } from 'react-dom'
 import { useHistory, useParams } from 'react-router-dom'
 import copy from 'copy-to-clipboard'
 import { isIOS } from 'react-device-detect'
-import {
-  leaveRoom,
-  useSocket,
-  joinRoom,
-  onRoomJoined,
-  changeUrl,
-  handleUrlChange,
-  changePlay,
-  play,
-  pause,
-  changePause,
-  seek,
-  changeSeek,
-} from '../socket'
+import { leaveRoom, useSync, joinRoom, onRoomJoined } from '../context'
 import { isUuid } from 'uuidv4'
-import {
-  Form,
-  FormGroup,
-  Input,
-  Button,
-  InputGroup,
-  InputGroupAddon,
-} from 'reactstrap'
+import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
 import screenfull from 'screenfull'
+import { useDropzone } from 'react-dropzone'
 
 export const RoomPage = () => {
-  const socket = useSocket()
+  const { socket, connection } = useSync()
 
   const history = useHistory()
   const { id } = useParams()
 
-  const [admin, setAdmin] = useState(false)
-  const [url, setUrl] = useState('https://ohhmode.ru/09.mp4')
-  const [video, setVideo] = useState()
+  const [admin, setAdmin] = useState()
+  const [hidden, setHidden] = useState(false)
 
-  const player = useRef(null)
+  const localPlayer = useRef(null)
+  const localStream = useRef(null)
 
-  const handleChange = (e) => {
-    e.persist()
-    setUrl(e.target.value)
-  }
+  useEffect(() => {
+    connection.checkPresence(id, (isRoomExist, roomid) => {
+      if (isRoomExist === true) {
+        connection.join(roomid)
+      } else {
+        connection.open(roomid)
+      }
+    })
+  }, [connection, id])
 
-  const handleSubmit = () => {
-    const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/i
+  useEffect(() => {
+    if (admin === false) {
+      connection.onstream = (event) => {
+        localStream.current.srcObject = event.stream
+      }
 
-    if (!urlRegex.test(url)) {
-      toast.error('Введите корректный URL!')
-    } else {
-      toast.success('Видео добавлено!')
-      setVideo(url)
-      changeUrl(socket, url)
+      connection.onstreamended = () => {
+        toast.success('Вещание завершено!')
+        history.push('/')
+      }
     }
-  }
+  }, [admin, localStream.current])
+
+  const onDrop = useCallback((acceptedFiles) => {
+    if (localPlayer.current !== null) {
+      setHidden(true)
+      localPlayer.current.src = URL.createObjectURL(acceptedFiles[0])
+
+      connection.attachStreams = [localPlayer.current.captureStream()]
+    }
+  }, [])
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
   const handleFullScreen = () => {
-    if (player.current !== null) screenfull.request(findDOMNode(player.current))
+    if (localStream.current !== null)
+      screenfull.request(findDOMNode(localStream.current))
   }
-
-  useEffect(() => {
-    if (!admin) {
-      handleUrlChange(socket, (url) => setVideo(url))
-
-      changePlay(socket, (time) => {
-        if (player.current !== null) {
-          player.current.currentTime = time
-          player.current.play()
-        }
-      })
-
-      changeSeek(socket, (time) => {
-        if (player.current !== null) {
-          player.current.currentTime = time
-        }
-      })
-
-      changePause(socket, () => {
-        if (player.current !== null) {
-          player.current.pause()
-        }
-      })
-    } else {
-      socket.off('play')
-      socket.off('seek')
-      socket.off('pause')
-    }
-  }, [admin, socket])
-
-  useEffect(() => {
-    if (!id) history.push('/')
-  }, [id, history])
 
   useEffect(() => {
     if (!isUuid(id)) {
@@ -101,9 +67,8 @@ export const RoomPage = () => {
     } else {
       joinRoom(socket, id)
 
-      onRoomJoined(socket, ({ admin, url }) => {
+      onRoomJoined(socket, ({ admin }) => {
         setAdmin(admin)
-        if (url !== null) setVideo(url)
       })
     }
     return () => {
@@ -115,20 +80,6 @@ export const RoomPage = () => {
     }
   }, [history, id, socket])
 
-  const handlePlay = () => {
-    if (player.current !== null && admin) {
-      player.current.play()
-      play(socket, player.current.currentTime)
-    }
-  }
-
-  const handlePause = () => {
-    if (player.current !== null && admin) {
-      player.current.pause()
-      pause(socket)
-    }
-  }
-
   const copyURL = () => {
     copy(window.location.href)
     toast.success('Скопировано!')
@@ -137,12 +88,6 @@ export const RoomPage = () => {
   const copyID = () => {
     copy(id)
     toast.success('Скопировано!')
-  }
-
-  const handleSeek = () => {
-    if (player.current !== null && admin) {
-      seek(socket, player.current.currentTime)
-    }
   }
 
   return (
@@ -158,44 +103,48 @@ export const RoomPage = () => {
           </Button>
         </div>
       </h2>
-      {admin && (
-        <Form className="m-2" onSubmit={(e) => e.preventDefault()}>
-          <FormGroup>
-            <InputGroup>
-              <Input
-                className="p-4"
-                placeholder="URL"
-                value={url}
-                onChange={handleChange}
-                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              />
-              <InputGroupAddon addonType="append">
-                <Button onClick={handleSubmit} type="button" color="success">
-                  Добавить
-                </Button>
-              </InputGroupAddon>
-            </InputGroup>
-          </FormGroup>
-        </Form>
-      )}
 
-      {video && (
+      {admin ? (
         <>
-          <video
-            ref={player}
-            id="vid"
-            width="100%"
-            // width="640"
-            // height="360"
-            controls={admin || isIOS}
-            onPlay={handlePlay}
-            onPause={handlePause}
-            onSeeked={handleSeek}
-          >
-            <source src={video} type="video/mp4" />
-          </video>
+          {!hidden && (
+            <div
+              {...getRootProps()}
+              style={{
+                width: '200px',
+                textAlign: 'center',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: 'pointer',
+                background: '#eee',
+                padding: 10,
+                borderRadius: 10,
+                marginBottom: 15,
+              }}
+            >
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p style={{ margin: 0 }}>Отпустите видео сюда ...</p>
+              ) : (
+                <p style={{ margin: 0 }}>
+                  Перетащите сюда видео или нажмите для выбора
+                </p>
+              )}
+            </div>
+          )}
 
-          {!admin && !isIOS && (
+          <video
+            style={{ display: hidden ? 'block' : 'none' }}
+            ref={localPlayer}
+            width={400}
+            controls
+          />
+        </>
+      ) : (
+        <>
+          <video width="100%" ref={localStream} autoPlay playsInline />
+
+          {admin === false && !isIOS && (
             <Button className="m-3" onClick={handleFullScreen}>
               На весь экран
             </Button>
