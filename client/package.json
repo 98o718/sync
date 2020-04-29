@@ -9,7 +9,6 @@
     "bootstrap": "^4.4.1",
     "copy-to-clipboard": "^3.3.1",
     "react": "^16.13.1",
-    "react-device-detect": "^1.12.0",
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.0.1",
     "react-router-dom": "^5.1.2",
@@ -18,7 +17,6 @@
     "react-toastify": "^5.5.0",
     "reactstrap": "^8.4.1",
     "rtcmulticonnection-react-js": "^0.0.2",
-    "screenfull": "^5.0.2",
     "socket.io-client": "^2.3.0",
     "uuidv4": "^6.0.7"
   },

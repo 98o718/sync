@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { findDOMNode } from 'react-dom'
 import { useHistory, useParams } from 'react-router-dom'
 import copy from 'copy-to-clipboard'
-import { isIOS } from 'react-device-detect'
 import { leaveRoom, useSync, joinRoom, onRoomJoined } from '../context'
 import { isUuid } from 'uuidv4'
 import { Button } from 'reactstrap'
 import { toast } from 'react-toastify'
-import screenfull from 'screenfull'
 import { useDropzone } from 'react-dropzone'
 
 export const RoomPage = () => {
@@ -55,11 +52,6 @@ export const RoomPage = () => {
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
-
-  const handleFullScreen = () => {
-    if (localStream.current !== null)
-      screenfull.request(findDOMNode(localStream.current))
-  }
 
   useEffect(() => {
     if (!isUuid(id)) {
@@ -147,14 +139,9 @@ export const RoomPage = () => {
             ref={localStream}
             autoPlay
             playsInline
-            controls={isIOS}
+            controls
+            muted
           />
-
-          {admin === false && !isIOS && (
-            <Button className="m-3" onClick={handleFullScreen}>
-              На весь экран
-            </Button>
-          )}
         </>
       )}
     </>
