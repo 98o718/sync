@@ -14,10 +14,15 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import RTCMultiConnection from 'rtcmulticonnection-react-js'
 
-const socket = io(process.env.REACT_APP_WS_ENDPOINT, { secure: true })
+const socket = io(process.env.REACT_APP_WS_ENDPOINT, {
+  secure: process.env.NODE_ENV !== 'development',
+})
 const connection = new RTCMultiConnection()
 
-connection.socketURL = process.env.REACT_APP_WS_ENDPOINT + '/'
+connection.socketURL =
+  process.env.REACT_APP_WS_ENDPOINT + process.env.NODE_ENV === 'development'
+    ? '/'
+    : ':443/'
 
 connection.dontCaptureUserMedia = true
 connection.autoCreateMediaElement = false
